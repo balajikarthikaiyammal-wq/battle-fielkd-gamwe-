@@ -1,0 +1,85 @@
+import pandas as pd
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+from sklearn.model_selection import train_test_split
+
+from sklearn.naive_bayes import MultinomialNB
+
+from sklearn.metrics import accuracy_score
+
+
+# Step 1: Create dataset
+data = {
+    "message": [
+        "Win money now",
+        "Limited offer buy today",
+        "Meeting@gmail.com",
+        "Project deadline tomorrow",
+        "Congratulations you won prize",
+        "Call me later",
+        "Cheap loan available now",
+        "Lunch meeting today"
+    ],
+    "label": [
+        "spam",
+        "spam",
+        "ham",
+        "ham",
+        "spam",
+        "ham",
+        "spam",
+        "ham"
+    ]
+}
+
+
+# Step 2: Convert dataset to DataFrame
+df = pd.DataFrame(data)
+
+print("Dataset")
+print(df)
+
+
+# Step 3: Split features and labels
+X = df["message"]
+
+y = df["label"]
+
+
+# Step 4: Convert text to numeric vectors
+vectorizer = TfidfVectorizer()
+
+X_vector = vectorizer.fit_transform(X)
+
+
+# Step 5: Split training and testing data
+X_train,X_test,y_train,y_test = train_test_split(
+    X_vector,y,test_size=0.25,random_state=42
+)
+
+
+# Step 6: Create model
+model = MultinomialNB()
+
+
+# Step 7: Train model
+model.fit(X_train,y_train)
+
+
+# Step 8: Test model
+predictions = model.predict(X_test)
+
+accuracy = accuracy_score(y_test,predictions)
+
+print("\nModel Accuracy:",accuracy)
+
+
+# Step 9: Predict new email
+new_email = ["Win free lottery today"]
+
+new_vector = vectorizer.transform(new_email)
+
+prediction = model.predict(new_vector)
+
+print("\nPrediction for new email:",prediction[0])
